@@ -1,0 +1,8 @@
+name: masjid_app
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - PyQt6==6.10.2
