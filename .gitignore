@@ -214,3 +214,16 @@ __marimo__/
 .idea/
 
 .env/
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Windows temp
+*.tmp
+*.temp
+
+# Cursor IDE
+.cursor/
