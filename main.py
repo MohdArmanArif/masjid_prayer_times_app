@@ -1,4 +1,5 @@
 import sys
+from fontmanager import FontManager
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -6,7 +7,7 @@ from PyQt6.QtWidgets import (
     QApplication, QWidget, QTableWidget, QTableWidgetItem,
     QVBoxLayout, QHBoxLayout, QHeaderView, QLabel
 )
-from PyQt6.QtGui import QPainter, QPixmap
+from PyQt6.QtGui import QPainter, QPixmap, QFont, QFontDatabase
 from PyQt6.QtCore import Qt, QRect, QTimer
 
 
@@ -19,6 +20,9 @@ class MainWindow(QWidget):
 
         # Load background image (used in paintEvent)
         self.background_image = QPixmap("background.jpg")
+
+        # Load fonts into script
+        self.font_manager = FontManager("fonts")
 
         # Resize window to match image size
         self.resize(self.background_image.size())
@@ -42,13 +46,9 @@ class MainWindow(QWidget):
         self.clock_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Style the clock text
-        self.clock_label.setStyleSheet("""
-            QLabel {
-                color: white;
-                font-size: 120px;
-                font-weight: bold;
-            }
-        """)
+        self.clock_label.setFont(
+            self.font_manager.get_font("SF Mono", 120, bold=True)
+        )
 
         # Define timezone (handles DST automatically)
         self.timezone = ZoneInfo("America/Toronto")
@@ -86,7 +86,7 @@ class MainWindow(QWidget):
         self.prayer_table.setStyleSheet("""
             QTableWidget {
                 background: rgba(0, 120, 255, 25);
-                border: 10px solid rgba(255, 215, 100, 50);
+                border: 10px solid rgba(255, 215, 100, 150);
                 border-radius: 25px;
                 gridline-color: rgba(255, 215, 100, 50);
                 color: rgba(255, 255, 255, 230);
