@@ -47,7 +47,7 @@ class MainWindow(QWidget):
 
         # Style the clock text
         self.clock_label.setFont(
-            self.font_manager.get_font("SF Mono", 120, bold=True)
+            self.font_manager.get_font("SF Mono", 120, weight=700, italic=False)
         )
 
         # Define timezone (handles DST automatically)
