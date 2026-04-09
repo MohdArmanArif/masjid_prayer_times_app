@@ -39,7 +39,8 @@ class MainWindow(QWidget):
 
         # ---------------- TABLE SETUP ----------------
         self.prayer_table = QTableWidget(6, 4)
-        self.setup_table()
+        self.jumuah_table = QTableWidget(2, 3)
+        self.setup_tables()
 
         # ---------------- CLOCK SETUP ----------------
         self.clock_label = QLabel()
@@ -65,15 +66,16 @@ class MainWindow(QWidget):
 
         # Left side layout:
         # Clock gets 1 part, table gets 4 parts (vertical split)
-        left_side_layout.addWidget(self.clock_label, 1)
-        left_side_layout.addWidget(self.prayer_table, 4)
+        left_side_layout.addWidget(self.clock_label, 3)
+        left_side_layout.addWidget(self.prayer_table, 12)
+        left_side_layout.addWidget(self.jumuah_table, 4)
 
         # Main layout:
         # Left side gets 3 parts, right side gets 2 parts (horizontal split)
         main_layout.addLayout(left_side_layout, 3)
         main_layout.addLayout(right_side_layout, 2)
 
-    def setup_table(self):
+    def setup_tables(self):
         """
         Configures the prayer table appearance and fills it with data.
         """
@@ -81,35 +83,46 @@ class MainWindow(QWidget):
         # Hide default row/column headers (numbers/letters)
         self.prayer_table.verticalHeader().setVisible(False)
         self.prayer_table.horizontalHeader().setVisible(False)
+        self.jumuah_table.verticalHeader().setVisible(False)
+        self.jumuah_table.horizontalHeader().setVisible(False)
 
         # Style the table (glass effect + gold border)
-        self.prayer_table.setStyleSheet("""
-            QTableWidget {
-                background: rgba(0, 120, 255, 25);
-                border: 10px solid rgba(255, 215, 100, 150);
-                border-radius: 25px;
-                gridline-color: rgba(255, 215, 100, 50);
-                color: rgba(255, 255, 255, 230);
-                font-size: 40px;
-            }
+        table_style = """
+        QTableWidget {
+            background: rgba(0, 120, 255, 25);
+            border: 15px solid rgba(255, 215, 100, 180);
+            gridline-color: rgba(255, 215, 100, 50);
+            color: rgba(255, 255, 255, 230);
+        }
 
-            QTableWidget::item {
-                background: transparent;
-                border: none;
-                padding: 12px;
-            }
-        """)
+        QTableWidget::item {
+            background: transparent;
+            border: none;
+            padding: 12px;
+        }
+        """
+        self.prayer_table.setStyleSheet(table_style)
+        self.jumuah_table.setStyleSheet(table_style)
+
+        # Set font style for table
+        table_font = self.font_manager.get_font("SF Pro Display", 40, weight=500)
+        self.prayer_table.setFont(table_font)
+        self.jumuah_table.setFont(table_font)
 
         # Show grid lines but remove default frame
         self.prayer_table.setShowGrid(True)
+        self.jumuah_table.setShowGrid(True)
         self.prayer_table.setFrameShape(self.prayer_table.Shape.NoFrame)
+        self.jumuah_table.setFrameShape(self.jumuah_table.Shape.NoFrame)
 
         # Make all cells stretch evenly to fill available space
         self.prayer_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.jumuah_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.prayer_table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.jumuah_table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
         # Sample data (can later be replaced with real data)
-        table_data = [
+        prayer_table_data = [
             ["Prayer", "Start Time", "Iqaamah", "From..."],
             ["Fajr", "5:30 AM", "5:45 AM", "5:45 AM"],
             ["Dhuhr", "1:15 PM", "1:30 PM", "1:30 PM"],
@@ -117,13 +130,22 @@ class MainWindow(QWidget):
             ["Maghrib", "7:40 PM", "7:45 PM", "7:45 PM"],
             ["Isha", "9:00 PM", "9:15 PM", "9:15 PM"],
         ]
+        jumuah_table_data = [
+            ["Jumuah", "1st Khutbah", "2nd Khutbah"],
+            ["Times", "1:30 PM", "2:30 PM"],
+        ]
 
-        # Populate the table
+        # Populate the tables
         for row in range(6):
             for col in range(4):
-                cell = QTableWidgetItem(table_data[row][col])
+                cell = QTableWidgetItem(prayer_table_data[row][col])
                 cell.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 self.prayer_table.setItem(row, col, cell)
+        for row in range(2):
+            for col in range(3):
+                cell = QTableWidgetItem(jumuah_table_data[row][col])
+                cell.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.jumuah_table.setItem(row, col, cell)
 
     def paintEvent(self, event):
         """

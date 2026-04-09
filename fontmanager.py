@@ -73,8 +73,6 @@ class FontManager:
                 print(f"Failed to load font: {file_path}")
                 continue
 
-            print(f"Loaded font file: {file_path}")
-
             # Get the font family names from this file
             families = QFontDatabase.applicationFontFamilies(font_id)
 
@@ -112,12 +110,13 @@ class FontManager:
                     if not self._style_already_recorded(family_name, style_name):
                         self.font_catalog[family_name].append(font_info)
 
-                        print(
-                            f"  Family: {family_name} | "
-                            f"Style: {style_name} | "
-                            f"Weight: {font_info['weight']} | "
-                            f"Italic: {font_info['italic']}"
-                        )
+                        # For debugging
+                        # print(
+                        #     f"  Family: {family_name} | "
+                        #     f"Style: {style_name} | "
+                        #     f"Weight: {font_info['weight']} | "
+                        #     f"Italic: {font_info['italic']}"
+                        # )
 
     def _style_already_recorded(self, family_name, style_name):
         """
