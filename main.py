@@ -2,6 +2,7 @@ import sys
 from fontmanager import FontManager
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from resource_path import resource_path
 
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QTableWidget, QTableWidgetItem,
@@ -19,10 +20,10 @@ class MainWindow(QWidget):
         self.setWindowTitle("Waqt App")
 
         # Load background image (used in paintEvent)
-        self.background_image = QPixmap("background.jpg")
+        self.background_image = QPixmap(resource_path("background.jpg"))
 
         # Load fonts into script
-        self.font_manager = FontManager("fonts")
+        self.font_manager = FontManager(resource_path("fonts"))
 
         # Resize window to match image size
         self.resize(self.background_image.size())
@@ -47,9 +48,13 @@ class MainWindow(QWidget):
         self.clock_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Style the clock text
-        self.clock_label.setFont(
-            self.font_manager.get_font("SF Mono", 120, weight=700, italic=False)
-        )
+        if self.font_manager.has_family("SF Mono"):
+            clock_font = self.font_manager.get_font("SF Mono", 120, weight=700)
+        else:
+            clock_font = QFont()
+            clock_font.setPointSize(40)
+
+        self.clock_label.setFont(clock_font)
 
         # Define timezone (handles DST automatically)
         self.timezone = ZoneInfo("America/Toronto")
@@ -90,28 +95,34 @@ class MainWindow(QWidget):
         table_style = """
         QTableWidget {
             background: rgba(0, 120, 255, 25);
-            border: 15px solid rgba(255, 215, 100, 180);
+            border: 15px solid rgba(255, 215, 100, 200);
+            border-radius: 25px;
             gridline-color: rgba(255, 215, 100, 50);
             color: rgba(255, 255, 255, 230);
         }
 
         QTableWidget::item {
             background: transparent;
-            border: none;
+            border: 1px solid rgba(255, 215, 100, 50);
             padding: 12px;
         }
         """
         self.prayer_table.setStyleSheet(table_style)
         self.jumuah_table.setStyleSheet(table_style)
 
-        # Set font style for table
-        table_font = self.font_manager.get_font("SF Pro Display", 40, weight=500)
+        # Set font style for table (fallback if font not found)
+        if self.font_manager.has_family("SF Pro Display"):
+            table_font = self.font_manager.get_font("SF Pro Display", 40, weight=500)
+        else:
+            table_font = QFont()
+            table_font.setPointSize(40)
+
         self.prayer_table.setFont(table_font)
         self.jumuah_table.setFont(table_font)
 
         # Show grid lines but remove default frame
-        self.prayer_table.setShowGrid(True)
-        self.jumuah_table.setShowGrid(True)
+        self.prayer_table.setShowGrid(False)
+        self.jumuah_table.setShowGrid(False)
         self.prayer_table.setFrameShape(self.prayer_table.Shape.NoFrame)
         self.jumuah_table.setFrameShape(self.jumuah_table.Shape.NoFrame)
 
