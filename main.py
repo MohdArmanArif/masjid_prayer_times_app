@@ -3,6 +3,7 @@ from fontmanager import FontManager
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from resource_path import resource_path
+from time_data import PrayerDatabase
 
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QTableWidget, QTableWidgetItem,
@@ -37,6 +38,10 @@ class MainWindow(QWidget):
 
         # Right side = reserved for future content (e.g. images)
         right_side_layout = QVBoxLayout()
+
+        # ---------------- DATA SETUP -----------------
+        self.pd = PrayerDatabase()
+        self.pd.load_data()
 
         # ---------------- TABLE SETUP ----------------
         self.prayer_table = QTableWidget(6, 4)
@@ -133,13 +138,15 @@ class MainWindow(QWidget):
         self.jumuah_table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
         # Sample data (can later be replaced with real data)
+        today_row = self.pd.get_today_row()
+
         prayer_table_data = [
             ["Prayer", "Start Time", "Iqaamah", "From..."],
-            ["Fajr", "5:30 AM", "5:45 AM", "5:45 AM"],
-            ["Dhuhr", "1:15 PM", "1:30 PM", "1:30 PM"],
-            ["Asr", "5:00 PM", "5:20 PM", "5:20 PM"],
-            ["Maghrib", "7:40 PM", "7:45 PM", "7:45 PM"],
-            ["Isha", "9:00 PM", "9:15 PM", "9:15 PM"],
+            ["Fajr", today_row[1].strftime("%I:%M %p"), "5:45 AM", "5:45 AM"],
+            ["Dhuhr", today_row[3].strftime("%I:%M %p"), "1:30 PM", "1:30 PM"],
+            ["Asr", today_row[4].strftime("%I:%M %p"), "5:20 PM", "5:20 PM"],
+            ["Maghrib", today_row[5].strftime("%I:%M %p"), "7:45 PM", "7:45 PM"],
+            ["Isha", today_row[6].strftime("%I:%M %p"), "9:15 PM", "9:15 PM"],
         ]
         jumuah_table_data = [
             ["Jumuah", "1st Khutbah", "2nd Khutbah"],
