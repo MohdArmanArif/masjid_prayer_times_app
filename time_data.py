@@ -102,3 +102,6 @@ class PrayerDatabase:
 
         # If no match found, return None
         return None
+
+    # Algo for now
+    # fajr: 30-45, zuhr: 25-40, asr: 30-45, isha: 30-45 between 7 and 10:45
