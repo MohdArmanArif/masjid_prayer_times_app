@@ -8,3 +8,4 @@ dependencies:
       - PyQt6==6.10.2
       - pyinstaller
       - requests
+      - pandas

@@ -27,8 +27,6 @@ class DisplayWindow(QWidget):
         self.setWindowTitle("Waqt App")
 
         # Load the background image for the display window
-        # resource_path makes this work both in normal Python runs
-        # and in bundled executables made with PyInstaller
         self.background_image = QPixmap(resource_path("background.jpg"))
 
         # Load all custom fonts from the fonts folder
@@ -54,8 +52,6 @@ class DisplayWindow(QWidget):
 
         # ---------------- TABLE SETUP ----------------
         # Create the two tables used in the display
-        # prayer_table = daily prayer times
-        # jumuah_table = Friday khutbah times
         self.prayer_table = QTableWidget(6, 4)
         self.jumuah_table = QTableWidget(2, 3)
         self.setup_tables()
@@ -76,7 +72,6 @@ class DisplayWindow(QWidget):
         self.clock_label.setFont(clock_font)
 
         # Define the timezone used for the clock
-        # This also ensures daylight savings is handled correctly
         self.timezone = ZoneInfo("America/Toronto")
 
         # Set the clock text immediately when the window starts
@@ -89,26 +84,22 @@ class DisplayWindow(QWidget):
 
         # ---------------- LAYOUT STRUCTURE ----------------
         # Add the clock and tables to the left side
-        # The numbers control how much vertical space each widget gets
         left_side_layout.addWidget(self.clock_label, 3)
         left_side_layout.addWidget(self.prayer_table, 12)
         left_side_layout.addWidget(self.jumuah_table, 4)
 
         # Add left and right sections to the main window
-        # The numbers control how much horizontal space each side gets
         main_layout.addLayout(left_side_layout, 3)
         main_layout.addLayout(right_side_layout, 2)
 
     def setup_tables(self):
         # Hide the default row and column headers on both tables
-        # This removes the built-in numbered/lettered edges
         self.prayer_table.verticalHeader().setVisible(False)
         self.prayer_table.horizontalHeader().setVisible(False)
         self.jumuah_table.verticalHeader().setVisible(False)
         self.jumuah_table.horizontalHeader().setVisible(False)
 
         # Shared stylesheet for both tables
-        # Gives the tables a translucent blue background and gold borders
         table_style = """
         QTableWidget {
             background: rgba(0, 120, 255, 25);
@@ -128,7 +119,6 @@ class DisplayWindow(QWidget):
         self.jumuah_table.setStyleSheet(table_style)
 
         # Try to use the custom SF Pro Display font for the tables
-        # If that font is not available, use a default Qt font instead
         if self.font_manager.has_family("SF Pro Display"):
             table_font = self.font_manager.get_font("SF Pro Display", 40, weight=500)
         else:
@@ -138,8 +128,7 @@ class DisplayWindow(QWidget):
         self.prayer_table.setFont(table_font)
         self.jumuah_table.setFont(table_font)
 
-        # Turn off the built-in Qt grid lines because we are drawing custom cell borders
-        # Also remove the default widget frame so our custom border styling is visible
+        # Turn off the built-in Qt grid lines and remove the default widget frame
         self.prayer_table.setShowGrid(False)
         self.jumuah_table.setShowGrid(False)
         self.prayer_table.setFrameShape(self.prayer_table.Shape.NoFrame)
@@ -155,25 +144,16 @@ class DisplayWindow(QWidget):
         today_row = self.pd.get_today_row()
 
         # Build the data used to fill the main prayer table
-        # today_row indexes:
-        # [0] = date
-        # [1] = fajr
-        # [2] = sunrise
-        # [3] = dhuhr
-        # [4] = asr
-        # [5] = maghrib
-        # [6] = isha
         prayer_table_data = [
             ["Prayer", "Start Time", "Iqaamah", "From..."],
-            ["Fajr", today_row[1].strftime("%I:%M %p"), "5:45 AM", "5:45 AM"],
-            ["Dhuhr", today_row[3].strftime("%I:%M %p"), "1:30 PM", "1:30 PM"],
-            ["Asr", today_row[4].strftime("%I:%M %p"), "5:20 PM", "5:20 PM"],
-            ["Maghrib", today_row[5].strftime("%I:%M %p"), "7:45 PM", "7:45 PM"],
-            ["Isha", today_row[6].strftime("%I:%M %p"), "9:15 PM", "9:15 PM"],
+            ["Fajr", today_row["fajr"].strftime("%I:%M %p"), "5:45 AM", "5:45 AM"],
+            ["Dhuhr", today_row["dhuhr"].strftime("%I:%M %p"), "1:30 PM", "1:30 PM"],
+            ["Asr", today_row["asr"].strftime("%I:%M %p"), "5:20 PM", "5:20 PM"],
+            ["Maghrib", today_row["maghrib"].strftime("%I:%M %p"), "7:45 PM", "7:45 PM"],
+            ["Isha", today_row["isha"].strftime("%I:%M %p"), "9:15 PM", "9:15 PM"],
         ]
 
         # Build the data used to fill the Jumuah table
-        # These values are static for now
         jumuah_table_data = [
             ["Jumuah", "1st Khutbah", "2nd Khutbah"],
             ["Times", "1:30 PM", "2:30 PM"],
@@ -209,7 +189,6 @@ class DisplayWindow(QWidget):
             )
 
             # Calculate how much of the scaled image needs to be cropped
-            # so the image stays centered
             x_offset = (scaled_image.width() - window_rect.width()) // 2
             y_offset = (scaled_image.height() - window_rect.height()) // 2
 
@@ -233,7 +212,6 @@ class DisplayWindow(QWidget):
 
 def run_display(fullscreen=False):
     # Create the Qt application object
-    # Note: only one QApplication is allowed per process
     app = QApplication(sys.argv)
 
     # Create the display window
